@@ -40,7 +40,6 @@ shvm_use() {
 
   echo "Switched to $target"
 }
-export -f shvm_use
 
 shvm() {
   case "$1" in
@@ -80,12 +79,15 @@ shvm() {
     echo "Unrecognized option: $1" >&2
     return 1
     ;;
+  "")
+    "$SHVM_HOME/usr/shvm-help"
+    return 1
+    ;;
   *)
     echo "Unrecognized command: $1" >&2
     return 1
     ;;
   esac
 }
-export -f shvm
 
 export SHVM_HOME=${SHVM_HOME:-$HOME/.shvm}
