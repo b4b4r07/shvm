@@ -84,8 +84,15 @@ shvm() {
     return 1
     ;;
   *)
-    echo "Unrecognized command: $1" >&2
-    return 1
+    subcmd="$SHVM_HOME/usr/shvm-$1"
+    if [ -f "$subcmd" ]; then
+      shift
+      "$subcmd" "$@"
+      return $?
+    else
+      echo "Unrecognized command: $1" >&2
+      return 1
+    fi
     ;;
   esac
 }
