@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. "$SHVM_HOME/utils/utils.sh"
+
 shvm_use() {
   install=
   target=
@@ -41,8 +43,25 @@ shvm_use() {
   echo "Switched to $target"
 }
 
+shvm_select() {
+  filter="$(shvm_filter "$SHVM_FILTER")"
+  if [ -z "$filter" ]; then
+    echo "SHVM_FILTER: no filter available" >&2
+    return 1
+  fi
+  selected_shell="$("$SHVM_HOME/usr/shvm-list" "$@" | $filter | awk '{print $2}')"
+  if [ -z "$selected_shell" ]; then
+    return 0
+  fi
+  shvm_use "$selected_shell"
+}
+
 shvm() {
   case "$1" in
+  select)
+    shift
+    shvm_select "$@"
+    ;;
   list)
     shift
     "$SHVM_HOME/usr/shvm-list" "$@"
@@ -98,3 +117,4 @@ shvm() {
 }
 
 export SHVM_HOME=${SHVM_HOME:-$HOME/.shvm}
+export SHVM_FILTER="fzy:fzf-tmux:fzf:peco:percol"
